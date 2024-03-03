@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/static/css/main.0f3392dc.css",
+    "main.js": "/static/js/main.3a6863ee.js",
+    "static/media/hdfclogo.png": "/static/media/hdfclogo.c1e39bf0f198e1da9547.png",
+    "index.html": "/index.html",
+    "main.0f3392dc.css.map": "/static/css/main.0f3392dc.css.map",
+    "main.3a6863ee.js.map": "/static/js/main.3a6863ee.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.0f3392dc.css",
+    "static/js/main.3a6863ee.js"
+  ]
+}
