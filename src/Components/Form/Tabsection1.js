@@ -19,6 +19,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { toast, ToastContainer } from "react-toastify";
 import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
+import handleApprove from "../Service/patch";
 
 
 
@@ -268,7 +269,12 @@ const Tabsection1 = ({ onNext }) => {
   console.log(formData, "fm");
   
 
-  const handleSubmitPost = async () => {
+  const handleSubmitPost = async (e) => {
+    if(activeSubmit){
+           handleApprove(e);
+           return;
+    }
+
     try {
       const payload = {
         formID: fId,
@@ -533,7 +539,7 @@ const Tabsection1 = ({ onNext }) => {
         //   setFormData(updatedFormData);
         // }
 
-        toast.success("Update Successfully please submit your phone");
+        toast.success("Update Successfully please submit your form");
         // window.location.reload();
         setActiveSubmit(true);
       } catch (error) {
