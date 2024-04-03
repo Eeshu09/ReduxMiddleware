@@ -24,11 +24,12 @@ import { Link } from 'react-router-dom';
 import indianStates from '../state.json'
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-
+import { useSelector,useDispatch } from "react-redux";
 import {FormHelperText } from '@material-ui/core'; // Import FormHelperText
 
 
 import "react-toastify/dist/ReactToastify.css";
+import {add} from '../formSlice'
 
 import AddIcon from "@mui/icons-material/Add";
 // import { set } from "react-hook-form";
@@ -68,6 +69,8 @@ function Part1(){
     const[country,setCountry]=useState('india');
     const classes = useStyles();
 
+    const dispatch=useDispatch();
+
 
     const handleParentAccordionToggle = () => {
 
@@ -81,7 +84,12 @@ function Part1(){
         width: "100%", // Ensure full width
         marginTop: "15px",
       };
+      const {formData}=useSelector((state)=>state.formData);
+  console.log("formData",formData);
       const onSubmit=(data)=>{
+        dispatch(add(data));
+        // reset();
+
         console.log("Hello",data);
         navigate('/part2')
       }
@@ -168,6 +176,8 @@ function Part1(){
                           label="Company Name"
                           type="text"
                           name="company-name"
+                          defaultValue={formData?.[0]?.companyname ?? ""}
+
                           className={classes.formField}
                           {...register("companyname", {
                             required: "company-name is required",
@@ -186,6 +196,8 @@ function Part1(){
                           label="DBA (doing business as)"
                               type="text"  
                               name="dba"   
+                              defaultValue={formData?.[0]?.dba ?? ""}
+
                               {...register("dba", {
                                 required: "dba is required",
                                 pattern: {
@@ -204,6 +216,8 @@ function Part1(){
                           label="Contact Name"
                          type="text"
                          name="contact-name"
+                         defaultValue={formData?.[0]?.contactname?? ""}
+
                          {...register("contactname", {
                           required: "contact-name is required",
                           pattern: {
@@ -224,6 +238,8 @@ function Part1(){
                           label="Title"
                            type="text"
                           name="title"
+                          defaultValue={formData?.[0]?.title ?? ""}
+
                           {...register("title", {
                             required: "title is required",
                             pattern: {
@@ -243,6 +259,8 @@ function Part1(){
                           label="Telephone"
                           type="num"
                           name="telephone"
+                          defaultValue={formData?.[0]?.telephone ?? ""}
+
                           {...register("telephone", {
                             required: "Telephone number is required",
                             validate: validateIndianTelephone // Add custom validation function
@@ -258,6 +276,8 @@ function Part1(){
                           label="E-mail"
                           type="email"
                           name="email"
+                          defaultValue={formData?.[0]?.email ?? ""}
+
                           {...register("email", {
                             required: "email is required",
                             pattern: {
@@ -297,6 +317,8 @@ function Part1(){
 
                             label="State/Province"
                             name="state-province"
+                            defaultValue={formData?.[0]?.stateprovince ?? ""}
+
                             MenuProps={{
                               classes: { paper: classes.menu },
                             }}
@@ -317,13 +339,9 @@ function Part1(){
                               )
                             )}
                           </Select>
-                          {/* <span >
-                          {errors.stateprovince && (
-      <FormHelperText error >
-        {errors.stateprovince.message}
-      </FormHelperText>
-    )}</span>  */}
+                         
                         </FormControl>
+                        
                       
 
                       </Grid>
@@ -335,6 +353,8 @@ function Part1(){
                           label="City"
                           type="text"
                           name="city"
+                          defaultValue={formData?.[0]?.city ?? ""}
+
                           {...register("city", {
                             required: "city is required",
                           
@@ -352,6 +372,8 @@ function Part1(){
                           label="URL"
                           type="url"
                           name="url"
+                          defaultValue={formData?.[0]?.url ?? ""}
+
                           {...register("url", {
                             required: "URL is required",
                             pattern: {
@@ -372,6 +394,8 @@ function Part1(){
                           label="Pincode"
                           type="num"
                           name="Pincode"
+                          defaultValue={formData?.[0]?.Pincode ?? ""}
+
                           {...register("Pincode", {
                             required: "Pincode is required",
                           
@@ -389,6 +413,8 @@ function Part1(){
                           label="Business Address"
                            type="text"
                            name="business-address"
+                           defaultValue={formData?.[0]?.businessaddress ?? ""}
+
                            {...register("businessaddress", {
                             required: "business-address is required",
                            

@@ -16,6 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useContext } from "react";
+import { useSelector, useSelectorseSelector } from "react-redux";
 // import { DarkContext } from "../../scenes/global/DarkBar";
 import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
@@ -66,6 +67,9 @@ const useStyles = makeStyles((theme) => ({
 
 const apiUrl = process.env.REACT_APP_API_URL;
 function Part2(){
+  const {formData}=useSelector((state)=>state.formData);
+  console.log("formData",formData);
+
     const [expandedPanel, setExpandedPanel] = useState(null);
     const [businessExpanded, setBusinessExpanded] = useState(true);
 
@@ -254,13 +258,12 @@ function Part2(){
         padding: "8px",
         border: "1px solid #ccc",
         borderRadius: "4px",
-        boxSizing: "border-box", // So padding doesn't add to the width
+        boxSizing: "border-box", 
       };
     
-      // Style object for the accordion details
       const detailsStyle = {
         padding: "20px",
-        borderTop: "1px solid #000", // This creates the black border line seen in the image
+        borderTop: "1px solid #000",
       };
     
 
