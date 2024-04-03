@@ -22,26 +22,15 @@ import handleApprove from "../Service/patch";
 import {  CircularProgress } from "@mui/material";
 import { Link } from 'react-router-dom';
 import indianStates from '../state.json'
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
-import { useContext } from "react";
-// import { DarkContext } from "../../scenes/global/DarkBar";
+import {FormHelperText } from '@material-ui/core'; // Import FormHelperText
+
+
 import "react-toastify/dist/ReactToastify.css";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  FormGroup,
-  Checkbox,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-} from "@mui/material";
+
 import AddIcon from "@mui/icons-material/Add";
-import { EditCalendarRounded } from "@mui/icons-material";
 // import { set } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
@@ -72,8 +61,11 @@ const useStyles = makeStyles((theme) => ({
 const apiUrl = process.env.REACT_APP_API_URL;
 
 function Part1(){
+  const{register,reset,handleSubmit,formState:{errors}}=useForm();
+  const navigate=useNavigate();
     const [parentAccordionExpanded, setParentAccordionExpanded] = useState(true);
-    const [merchantExpanded, setMerchantExpanded] = useState(true); 
+    const [merchantExpanded, setMerchantExpanded] = useState(true);
+    const[country,setCountry]=useState('india');
     const classes = useStyles();
 
 
@@ -89,9 +81,23 @@ function Part1(){
         width: "100%", // Ensure full width
         marginTop: "15px",
       };
+      const onSubmit=(data)=>{
+        console.log("Hello",data);
+        navigate('/part2')
+      }
+      const validateIndianTelephone = (value) => {
+        const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
+    
+        if (!value.match(indianPhoneNumberRegex)) {
+          return "Please enter a valid Indian phone number";
+        }
+        return true; 
+      };
+    
     
     return (
         <>
+        <form onSubmit={handleSubmit(onSubmit)}>
           <Box
           sx={{
             display: "flex",
@@ -155,60 +161,114 @@ function Part1(){
                   </AccordionSummary>
                   <AccordionDetails>
                     <Grid container spacing={2}>
-                      <Grid item xs={3}>
+                      <Grid item xs={12}md={3} sm={6}>
                         <TextField
                          
                           fullWidth
                           label="Company Name"
                           type="text"
+                          name="company-name"
                           className={classes.formField}
- 
-                        
-                        />
+                          {...register("companyname", {
+                            required: "company-name is required",
+                            pattern: {
+                              value: /^[A-Za-z\s]+$/, 
+                              message: "Only alphabetical characters are allowed",
+                            },
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.companyname?.message}</span>
+                          }                        />
                       </Grid>
-                      <Grid item xs={3} >
+                      <Grid item xs={12}md={3} sm={6}>
                         <TextField
                         fullWidth
                           label="DBA (doing business as)"
-                              type="text"                         
-                         
-                          required
+                              type="text"  
+                              name="dba"   
+                              {...register("dba", {
+                                required: "dba is required",
+                                pattern: {
+                                  value: /^[A-Za-z\s]+$/, 
+                                  message: "Only alphabetical characters are allowed",
+                                },
+                              })}
+                              helperText={
+                                <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.dba?.message}</span>
+                              }                      
                         />
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={12}md={3} sm={6}>
                         <TextField
                          fullWidth
                           label="Contact Name"
-                         type="num"
+                         type="text"
+                         name="contact-name"
+                         {...register("contactname", {
+                          required: "contact-name is required",
+                          pattern: {
+                            value: /^[A-Za-z\s]+$/, 
+                            message: "Only alphabetical characters are allowed",
+                          },
+                        })}
+                        helperText={
+                          <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.contactname?.message}</span>
+                        }  
 
-                          required
                         />
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid  item xs={12}md={3} sm={6} >
                         <TextField
                         fullWidth
                           
                           label="Title"
                            type="text"
-                          required
+                          name="title"
+                          {...register("title", {
+                            required: "title is required",
+                            pattern: {
+                              value: /^[A-Za-z\s]+$/, 
+                              message: "Only alphabetical characters are allowed",
+                            },
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.title?.message}</span>
+                          }  
                         />
                       </Grid>
-                      <Grid item xs={12} md={3}>
+                      <Grid item xs={12}md={3} sm={6}>
                         <TextField
                           fullWidth
                          
                           label="Telephone"
                           type="num"
-                         
-                          required
+                          name="telephone"
+                          {...register("telephone", {
+                            required: "Telephone number is required",
+                            validate: validateIndianTelephone // Add custom validation function
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.telephone?.message}</span>
+                          }                           
                         />
                       </Grid>
-                      <Grid item xs={3}>
+                      <Grid item xs={12}md={3} sm={6}>
                         <TextField
                         fullWidth
                           label="E-mail"
                           type="email"
-                          required
+                          name="email"
+                          {...register("email", {
+                            required: "email is required",
+                            pattern: {
+                              value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$/i,
+                              message: "Please enter a valid email address",
+                            },
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.email?.message}</span>
+                          }  
+                          
                         />
                       </Grid>
 
@@ -216,8 +276,15 @@ function Part1(){
                         <TextField
                         
                           label="Country"
-                         
-                          required
+                          type="text"
+                           value={country}
+                           aria-readonly
+                           inputlabelprops={{
+                            shrink: true,
+                          }}
+                          {...register('country',{
+                          
+                          })}
                         />
                       </Grid>
 
@@ -227,26 +294,21 @@ function Part1(){
                             State/Province
                           </InputLabel>
                           <Select
-                            // value={
-                            //   formData && formData.length > 0
-                            //     ? editState
-                            //     : state
-                            // }
-                            // inputlabelprops={{
-                            //   shrink: true,
-                            // }}
-                            required
-                            label="State/Province"
 
-                            // onChange={
-                            //   formData && formData.length > 0
-                            //     ? (e) => setEditState(e.target.value)
-                            //     : handleStateChange
-                            // }
+                            label="State/Province"
+                            name="state-province"
                             MenuProps={{
                               classes: { paper: classes.menu },
                             }}
-                          >
+                            {...register("stateprovince", {
+                              required: 'State is required',
+                            })}
+                            helperText={
+                              <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.stateprovince?.message}</span>
+                            }
+                            
+                            >
+                              
                             {indianStates.India.states.map(
                               (indianState, index) => (
                                 <MenuItem key={index} value={indianState.name}>
@@ -255,7 +317,15 @@ function Part1(){
                               )
                             )}
                           </Select>
+                          {/* <span >
+                          {errors.stateprovince && (
+      <FormHelperText error >
+        {errors.stateprovince.message}
+      </FormHelperText>
+    )}</span>  */}
                         </FormControl>
+                      
+
                       </Grid>
 
                       <Grid item xs={12} md={2}>
@@ -264,7 +334,14 @@ function Part1(){
                           ullWidth
                           label="City"
                           type="text"
-                          required
+                          name="city"
+                          {...register("city", {
+                            required: "city is required",
+                          
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.city?.message}</span>
+                          }  
                         />
                       </Grid>
 
@@ -274,7 +351,17 @@ function Part1(){
                           fullWidth
                           label="URL"
                           type="url"
-                          required
+                          name="url"
+                          {...register("url", {
+                            required: "URL is required",
+                            pattern: {
+                              value: /^(ftp|http|https):\/\/[^ "]+$/,
+                              message: "Please enter a valid URL",
+                            },
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.url?.message}</span>
+                          }  
                         />
                       </Grid>
 
@@ -284,7 +371,15 @@ function Part1(){
                           fullWidth
                           label="Pincode"
                           type="num"
-                          required
+                          name="Pincode"
+                          {...register("Pincode", {
+                            required: "Pincode is required",
+                          
+                          })}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.Pincode?.message}</span>
+                          }  
+                          
                         />
                       </Grid>
 
@@ -293,7 +388,16 @@ function Part1(){
                          
                           label="Business Address"
                            type="text"
-                          required
+                           name="business-address"
+                           {...register("businessaddress", {
+                            required: "business-address is required",
+                           
+                          })}
+                          // error={Boolean(errors.businessaddress)}
+                          helperText={
+                            <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.businessaddress?.message}</span>
+                          }  
+                          
                         />
                       </Grid>
                     </Grid>
@@ -305,10 +409,10 @@ function Part1(){
             </AccordionDetails>
           </Accordion>
           <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px' }}>
-            <Link to="/part2"><Button variant="outlined" color="success">Save & Next</Button>&nbsp;
-</Link>
+            <Button variant="outlined" color="success" type="submit">Save & Next</Button>&nbsp;
           </Box>
         </Box>
+        </form>
         </>
     )
 }
