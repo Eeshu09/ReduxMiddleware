@@ -40,24 +40,31 @@ export default function Sign() {
 
   // getImageFromAPi
 
-  useEffect(() => {
-    const fetchImage = async () => {
-      const apiurl = `${apiUrl}ImageUpload/GetImage?formId=${fId}&merchantId=${mId}`;
+  // useEffect(() => {
+  //   const fetchImage = async () => {
+  //     const apiurl = `${apiUrl}ImageUpload/GetImage?formId=${fId}&merchantId=${mId}`;
 
-      try {
-        const response = await fetch(apiurl);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const blob = await response.blob();
-        const imageUrl = URL.createObjectURL(blob);
-        setApiImage(imageUrl);
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
+  //     try {
+  //       const response = await fetch(apiurl);
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! Status: ${response.status}`);
+  //       }
+  //       const blob = await response.blob();
+  //       const imageUrl = URL.createObjectURL(blob);
+  //       setApiImage(imageUrl);
+  //     } catch (error) {
+  //       console.error("Error:", error);
+  //     }
+  //   };
 
-    fetchImage();
+  //   fetchImage();
+  // }, []);
+   useEffect(() => {
+    const storedImageData = localStorage.getItem("uploadedImageData");
+    if (storedImageData) {
+      const storedImage = JSON.parse(storedImageData);
+      setApiImage(storedImage.dataUrl);
+    }
   }, []);
 console.log("fid",mId,fId);
   const handleSignatureChange = (event) => {
@@ -79,26 +86,42 @@ console.log("fid",mId,fId);
   console.log("apiImage", apiImage);
 
   //posting image
-  const uploadImg = async () => {
-    try {
-      const formData = new FormData();
-      formData.append("image", signatureImage);
-      formData.append("formId", fId);
-      formData.append("merchantId", mId);
+  // const uploadImg = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("image", signatureImage);
+  //     formData.append("formId", fId);
+  //     formData.append("merchantId", mId);
 
-      const response = await axios.post(`${apiUrl}InsertImage`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      const result = await response.data;
+  //     const response = await axios.post(`${apiUrl}InsertImage`, formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     const result = await response.data;
 
-      console.log("Response:", response.data);
-      toast.success(result.message);
-      // Handle response
-    } catch (error) {
-      console.error("Error:", error);
-      // Handle error
+  //     console.log("Response:", response.data);
+  //     toast.success(result.message);
+  //     // Handle response
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     // Handle error
+  //   }
+  // };
+  //store image in local Storage 
+  const uploadImg = async () => { 
+
+  if (signatureImage) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const dataUrl = reader.result;
+        const imageData = { dataUrl };
+        localStorage.setItem("uploadedImageData", JSON.stringify(imageData));
+        setApiImage(dataUrl);
+      };
+      reader.readAsDataURL(signatureImage);
+    } else {
+      toast.error("Please select a signature image to upload.");
     }
   };
 
@@ -185,7 +208,8 @@ console.log("fid",mId,fId);
               size="small"
               variant="outlined"
               color="success"
-              onClick={ChangeImageApi}
+              // onClick={ChangeImageApi}
+              onClick={uploadImg}
             >
               Change Signature
             </Button>
