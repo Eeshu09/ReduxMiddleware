@@ -64,6 +64,8 @@ const apiUrl = process.env.REACT_APP_API_URL;
 function Part1(){
   const{register,reset,handleSubmit,formState:{errors}}=useForm();
   const navigate=useNavigate();
+  const {formData}=useSelector((state)=>state.formData);
+  console.log("formData",formData);
     const [parentAccordionExpanded, setParentAccordionExpanded] = useState(true);
     const [merchantExpanded, setMerchantExpanded] = useState(true);
     const[country,setCountry]=useState('india');
@@ -84,8 +86,7 @@ function Part1(){
         width: "100%", // Ensure full width
         marginTop: "15px",
       };
-      const {formData}=useSelector((state)=>state.formData);
-  console.log("formData",formData);
+     
       const onSubmit=(data)=>{
         dispatch(add(data));
         // reset();
@@ -435,7 +436,7 @@ function Part1(){
             </AccordionDetails>
           </Accordion>
           <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px' }}>
-            <Button variant="outlined" color="success" type="submit">Save & Next</Button>&nbsp;
+        {formData && formData[0]?<Button color="primary" variant="outlined" onClick={()=>navigate('/part2')}>Update</Button> :<Button variant="outlined" color="success" type="submit">Save & Next</Button>}
           </Box>
         </Box>
         </form>

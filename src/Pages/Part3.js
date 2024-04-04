@@ -12,25 +12,12 @@ import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import { makeStyles } from "@material-ui/core/styles";
 import Signature from '../Components/Form/Signature'
-import { useContext } from "react";
-import { useParams } from "react-router-dom";
+import {add} from '../formSlice'
+import { useSelector,useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+
 import "react-toastify/dist/ReactToastify.css";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  FormGroup,
-  Checkbox,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-} from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { EditCalendarRounded } from "@mui/icons-material";
+
 import { Link } from 'react-router-dom';
 
 // import { set } from "react-hook-form";
@@ -59,6 +46,10 @@ const useStyles = makeStyles((theme) => ({
     // Additional custom styles...
   }));
 function Part3(){
+  const{register,reset,handleSubmit,formState:{errors}}=useForm();
+  const dispatch=useDispatch();
+  const {formData}=useSelector((state)=>state.formData);
+  console.log("dlfeof",formData);
     const classes = useStyles();
     const [parentAccordionExpanded, setParentAccordionExpanded] = useState(true);
     const [merchantExpanded, setMerchantExpanded] = useState(true); 
@@ -70,10 +61,17 @@ function Part3(){
       const handleMerchantAccordionToggle = () => {
         setMerchantExpanded(!merchantExpanded);
       };
+      const onSubmit=(data)=>{
+        dispatch(add(data));
+        console.log('Data',data);
+
+      }
     
 
     return (
         <>
+        <form onSubmit={handleSubmit(onSubmit)}>
+
          <Accordion 
          expanded={parentAccordionExpanded}
          onChange={handleParentAccordionToggle}
@@ -133,13 +131,24 @@ function Part3(){
                       </Typography>
                       <TextField
                         
-                        required
                         
-                        name="executiveName"
-                       
+                        name="executiveOfficerName"
+                       type="text"
                         label="Executive Officer Name"
+                        defaultValue={formData?.[2]?.executiveOfficerName?? ""}
+
                         className={classes.formField}
                         sx={{ width: 200 }}
+                        {...register("executiveOfficerName", {
+                          required: "Office Name is required",
+                          pattern: {
+                            value: /^[A-Za-z\s]+$/, 
+                            message: "Only alphabetical characters are allowed",
+                          },
+                        })}
+                        helperText={
+                          <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.executiveOfficerName?.message}</span>
+                        } 
                         
                       />
                     </Box>
@@ -164,13 +173,26 @@ function Part3(){
                       </Typography>
                       <TextField
                        
-                        required
+                        reuired
                         
-                        name="executiveTitle"
+                        name="qsaCompany"
                        
                         className={classes.formField}
-                        label="Title"
+                        defaultValue={formData?.[2]?.qsaCompany?? ""}
+
+                        label="QSA Company"
+                        type="text"
                         sx={{ width: 200 }}
+                        {...register("qsaCompany", {
+                          required: "qsaCompany is required",
+                          pattern: {
+                            value: /^[A-Za-z\s]+$/, 
+                            message: "Only alphabetical characters are allowed",
+                          },
+                        })}
+                        helperText={
+                          <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.qsaCompany?.message}</span>
+                        } 
                        
                       />
                     </Box>
@@ -183,8 +205,9 @@ function Part3(){
           </AccordionDetails>
         </Accordion><br/>
         <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px'}}>
-           <Link to='/part2'><Button variant="outlined">Previous</Button></Link> &nbsp;<Button variant="outlined" color="success">Final Submit</Button>
+           <Link to='/part2'><Button variant="outlined">Previous</Button></Link> &nbsp;{formData && formData[2]?<Button color="primary" variant="outlined">Updata</Button>:<Button variant="outlined" color="success" type="submit">Final Submit</Button>}
           </Box>
+          </form>
 
         </>
     )

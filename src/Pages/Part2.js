@@ -12,13 +12,13 @@ import FormControl from "@mui/material/FormControl";
 import Button from "@mui/material/Button";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
-// import indianStates from "./state.json";
 import { makeStyles } from "@material-ui/core/styles";
+import { useDispatch, useSelector, useSelectorseSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
+import {add} from '../formSlice'
+import {Radio,} from '@mui/material';
 
-import { useContext } from "react";
-import { useSelector, useSelectorseSelector } from "react-redux";
-// import { DarkContext } from "../../scenes/global/DarkBar";
-import { useParams } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
 import {
   Table,
@@ -67,8 +67,18 @@ const useStyles = makeStyles((theme) => ({
 
 const apiUrl = process.env.REACT_APP_API_URL;
 function Part2(){
-  const {formData}=useSelector((state)=>state.formData);
-  console.log("formData",formData);
+  const{register,reset,handleSubmit,formState:{errors}}=useForm();
+  const{formData}=useSelector((stata)=>stata.formData)
+  console.log('dffk',formData)
+  const [selectedValue, setSelectedValue] = useState('');
+  const handleRadioChange = (event) => {
+    setSelectedValue(event.target.value);
+  };
+
+  const dispatch=useDispatch();
+  const navigate=useNavigate();
+
+
 
     const [expandedPanel, setExpandedPanel] = useState(null);
     const [businessExpanded, setBusinessExpanded] = useState(true);
@@ -266,10 +276,16 @@ function Part2(){
         borderTop: "1px solid #000",
       };
     
-
+const onSubmit=(data)=>{
+  const data1={...data,Is_application_PA_DSSListed:selectedValue}
+  
+  dispatch(add(data1));
+  navigate('/part3')
+  console.log(data);
+}
     return (
         <>
-        
+        <form onSubmit={handleSubmit(onSubmit)}>     
         <Box
           sx={{
              display: "flex",
@@ -335,11 +351,20 @@ function Part2(){
                       Payment processing has been fully outsourced. Transactions
                       involving Debit / Credit cards are handled by
                       <TextField
-                        
-                        required
-                     
+                                             
                         variant="outlined"
                         placeholder="Razorpay / CC Avenues"
+                        type="text"
+                        name="transactionhandler"
+                        defaultValue={formData?.[1]?.transactionhandler?? ""}
+
+                        {...register('transactionhandler',{
+                          required:'transation is required'
+                        })}
+                        helperText={
+                          <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.transactionhandler?.message}</span>
+                        }  
+
                         
                         style={{
                           width: "auto",
@@ -354,11 +379,19 @@ function Part2(){
                       
                         className={classes.formField}
                         size="small"
-                       
+                        type="text"
+                        name="cartDetails"
                         variant="outlined"
+                        defaultValue={formData?.[1]?.cardDetails?? ""}
+
                         placeholder=" Mention here card details"
-                       
-                        required
+                        {...register('cardDetails',{
+                          required:'cardDetails is required'
+                        })}
+                        helperText={
+                          <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.cardDetails?.message}</span>
+                        }  
+
                         style={{
                           width: "auto",
                           marginTop: "-8px",
@@ -448,36 +481,56 @@ function Part2(){
                               <TableCell component="th" scope="row">
                                 <TextField
                                 
-                                  required
+                                  
                                   placeholder="Eg-Retail outlets"
-                                 
-                                
-                                  name="type"
-                                 
+                                  name="typeOfFacility"
+                                  type="text"
+                                  defaultValue={formData?.[1]?.typeOfFacility?? ""}
+
+                                  {...register('typeOfFacility',{
+                                    required:'Type of Facility is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.typeOfFacility?.message}</span>
+                                  }  
+          
                                   fullWidth
                                 />
                               </TableCell>
                               <TableCell align="right">
                                 <TextField
                                  
-                                  name="number"
-                                  required
-                                 
-                                  
+                                  name="numberOfFacility"
+                                  type="num"
                                   fullWidth
+                                  defaultValue={formData?.[1]?.numberOfFacility?? ""}
+
+                                  {...register('numberOfFacility',{
+                                    required:'Number of Facility is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.numberOfFacility?.message}</span>
+                                  }  
+          
                                 />
                               </TableCell>
                               <TableCell align="right">
-                                <TextField
-                                  
-                                  required
-                                  
+                                <TextField 
                                  
                                   className={classes.formField}
-                                 
                                   name="location"
+                                  type="text"
+                                  defaultValue={formData?.[1]?.location?? ""}
+
                                   
                                   fullWidth
+                                  {...register('location',{
+                                    required:'location is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.location?.message}</span>
+                                  }  
+          
                                 />
                               </TableCell>
 
@@ -606,9 +659,18 @@ function Part2(){
                               <TableCell>
                                 <TextField
                                   
-                                  required
                                   className={classes.formField}
-                                  name="name"
+                                  name="paymentApplicationName"
+                                  type="text"
+                                  defaultValue={formData?.[1]?.paymentApplicationName?? ""}
+
+                                  {...register('paymentApplicationName',{
+                                    required:'paymentApplicationName is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.paymentApplicationName?.message}</span>
+                                  }  
+          
                                   
                                   fullWidth
                                  
@@ -618,26 +680,43 @@ function Part2(){
                               <TableCell>
                                 <TextField
                                  
-                                  required
                                   
                                   name="version"
+                                  type="text"
+                                  defaultValue={formData?.[1]?.version?? ""}
+
                                 
                                   fullWidth
+                                  {...register('version',{
+                                    required:'version is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.version?.message}</span>
+                                  }  
+          
                                  
                                 />
                               </TableCell>
                               <TableCell>
                                 <TextField
                                  
-                                  required
                                   
                                   name="vendor"
-                                  
+                                  type="text"
+                                  defaultValue={formData?.[1]?.vendor?? ""}
+
+                                  {...register('vendor',{
+                                    required:'vendor is required'
+                                  })}
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.vendor?.message}</span>
+                                  }  
+          
                                   fullWidth
                                   
                                 />
                               </TableCell>
-                              <TableCell>
+                              {/* <TableCell>
                                 <FormGroup row>
                                   <FormControlLabel
                                     control={
@@ -656,14 +735,49 @@ function Part2(){
                                     label="No"
                                   />
                                 </FormGroup>
-                              </TableCell>
+                              </TableCell> */}
+                               <TableCell>
+                               <FormGroup row>
+      <FormControlLabel
+        control={
+          <Radio
+          checked={formData?.[1]?.Is_application_PA_DSSListed === 'yes' || selectedValue === 'yes'}
+          value="yes"
+            name="yes"
+            onChange={handleRadioChange}
+          />
+        }
+        label="Yes"
+      />
+      <FormControlLabel
+        control={
+          <Radio
+          checked={formData?.[1]?.Is_application_PA_DSSListed === 'no' || selectedValue === 'no'}
+            value="no"
+            name="no"
+            onChange={handleRadioChange}
+
+          />
+        }
+        label="No"
+      />
+    </FormGroup>
+    </TableCell>
                               <TableCell>
                                 <TextField
                                  
                                   name="expiryDate"
-                                  required
                                   fullWidth
-                                  type="date"
+                                  type="date" 
+                                   {...register('expiryDate',{
+                                    required:'expiryDate is required'
+                                  })}
+                                  defaultValue={formData?.[1]?.expiryDate?? ""}
+
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.expiryDate?.message}</span>
+                                  }  
+          
                                  
                                  
                                 />
@@ -731,10 +845,21 @@ function Part2(){
                             
                             className={classes.formField}
                             fullWidth
-                            required
                             label="Merchant's website URL"
                             variant="outlined"
                             placeholder="http://www.example.com"
+                            type="text"
+                            name="merchantWebsiteUrl"
+                            {...register('merchantWebsiteUrl',{
+                            })}
+                            defaultValue={formData?.[1]?.merchantWebsiteUrl?? ""}
+
+                            helperText={
+                              <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.merchantWebsiteUrl?.message}</span>
+                            }  
+    
+                           
+
                             
                           />
                         </Grid>
@@ -746,9 +871,19 @@ function Part2(){
                             label="Name of ERP - If any"
                             variant="outlined"
                             placeholder="e.g., Octopot"
-                           
-                            required
-                           
+                            type="text"
+                            name="nameOfErp"
+                             {...register('nameOfErp',{
+                                    required:'Erp is required'
+                                  })}
+                                  defaultValue={formData?.[1]?.nameOfErp?? ""}
+
+                                  helperText={
+                                    <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.nameOfErp?.message}</span>
+                                  }  
+          
+                                 
+                                                      
                           />
                         </Grid>
                         <Grid item xs={6}>
@@ -756,10 +891,22 @@ function Part2(){
                             
                             className={classes.formField}
                             fullWidth
-                            required
                             label="Payment Gateway"
                             variant="outlined"
                             placeholder="e.g., CC Avenues / Razorpay / Billdesk"
+                            type="text"
+                            name="paymentGateway"
+                            {...register('paymentGateWay',{
+                              required:'paymentGateWay is required'
+                            })}
+                            defaultValue={formData?.[1]?.paymentGateWay?? ""}
+
+                            helperText={
+                              <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.paymentGateWay?.message}</span>
+                            }  
+    
+                           
+
                             
                             
                           />
@@ -769,10 +916,21 @@ function Part2(){
                             
                             className={classes.formField}
                             fullWidth
-                            required
                             label="Any other third party service Provider"
                             variant="outlined"
                             placeholder="e.g., Juspay"
+                            name="thirdPartyServiceProvider"
+                            type="text"
+                            {...register('thirdPartyServiceProider',{
+                              required:'thirdPartyServiceProvider is required'
+                            })}
+                            defaultValue={formData?.[1]?.thirdPartyServiceProvider?? ""}
+
+                            helperText={
+                              <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.thirdPartyServiceProvider?.message}</span>
+                            }  
+    
+                           
                           
                             
                           />
@@ -851,9 +1009,18 @@ function Part2(){
                                 <TableCell>
                                   <TextField
                                     
-                                    required
-                                    name="name"
-                                    // value={provider.name}
+                                    name="serviceProvider"
+                                    type="text"
+                                    defaultValue={formData?.[1]?.serviceProvider?? ""}
+
+                                    {...register('serviceProvider',{
+                                      required:'serviceProvider is required'
+                                    })}
+                                    helperText={
+                                      <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.serviceProvider?.message}</span>
+                                    }  
+            
+
                                    
                                     fullWidth
                                   />
@@ -862,8 +1029,16 @@ function Part2(){
                                   <TextField
                                    
                                     name="description"
-                                    required
                                     type="text"
+                                    defaultValue={formData?.[1]?.description?? ""}
+
+                                    {...register('description',{
+                                      required:'description is required'
+                                    })}
+                                    helperText={
+                                      <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.description?.message}</span>
+                                    }  
+            
                                     fullWidth
                                   />
                                 </TableCell>
@@ -889,9 +1064,11 @@ function Part2(){
             </AccordionDetails>
           </Accordion>
           <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px'}}>
-           <Link to="/"><Button variant="outlined">Previous</Button></Link> &nbsp;<Link to="/part3"><Button variant="outlined" color="success" >Save & Next</Button></Link>
+           <Link to="/"><Button variant="outlined">Previous</Button></Link> &nbsp;{formData && formData[1]?<Button color="primary" variant="outlined" onClick={()=>navigate('/part3')}>Updata</Button>:<Button variant="outlined" color="success" type="submit">Save & Next</Button>}
           </Box>
         </Box>
+        </form>
+
         
         </>
     )
