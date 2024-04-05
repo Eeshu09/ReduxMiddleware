@@ -16,23 +16,13 @@ import Button from "@mui/material/Button";
 import axios from "axios";
 import "react-datepicker/dist/react-datepicker.css";
 import { makeStyles } from "@material-ui/core/styles";
-import { toast, ToastContainer } from "react-toastify";
-import { useLocation } from 'react-router-dom';
-import handleApprove from "../Service/patch";
-import {  CircularProgress } from "@mui/material";
-import { Link } from 'react-router-dom';
 import indianStates from '../state.json'
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
-import {FormHelperText } from '@material-ui/core'; // Import FormHelperText
-
-
 import "react-toastify/dist/ReactToastify.css";
-import {add} from '../formSlice'
+import {add} from '../Redux/formSlice'
 
-import AddIcon from "@mui/icons-material/Add";
-// import { set } from "react-hook-form";
 
 const useStyles = makeStyles((theme) => ({
   accordionHeader: {
@@ -62,16 +52,51 @@ const useStyles = makeStyles((theme) => ({
 const apiUrl = process.env.REACT_APP_API_URL;
 
 function Part1(){
+  const [parentAccordionExpanded, setParentAccordionExpanded] = useState(true);
+  const [merchantExpanded, setMerchantExpanded] = useState(true);
+  const[country,setCountry]=useState('india');
+  const classes = useStyles();
   const{register,reset,handleSubmit,formState:{errors}}=useForm();
   const navigate=useNavigate();
+  const dispatch=useDispatch();
   const {formData}=useSelector((state)=>state.formData);
-  console.log("formData",formData);
-    const [parentAccordionExpanded, setParentAccordionExpanded] = useState(true);
-    const [merchantExpanded, setMerchantExpanded] = useState(true);
-    const[country,setCountry]=useState('india');
-    const classes = useStyles();
+  console.log("formData",formData[0]);
+const [partOneFormData,setPartOneFormData]=useState({
+ companyname:'',
+ contactname:'',
+ country:'',
+ dba:'',
+ Pincode:'',
+ email:'',
+ telephone:'',
+ title:'',
+ url:'',
+ businessaddress:'',
+ stateprovince:'',
+ city:'',  
+})
+useEffect(() => {
+  if (formData && formData.length > 0) {
+    const data = formData[0]; 
+    setPartOneFormData({
+      companyname: data.companyname || '',
+      contactname: data.contactname || '',
+      country: data.country || '',
+      dba: data.dba || '',
+      Pincode: data.PinCode || '',
+      email: data.email || '',
+      telephone: data.telephone || '',
+      title: data.title || '',
+      url: data.url || '',
+      businessaddress: data.businessaddress || '',
+      stateprovince: data.stateprovince || '',
+      city: data.city || '',  
+    });
+  }
+}, [formData]);
 
-    const dispatch=useDispatch();
+console.log("companyName",partOneFormData.companyname);
+   
 
 
     const handleParentAccordionToggle = () => {
@@ -83,14 +108,12 @@ function Part1(){
       };
     
       const accordionStyle = {
-        width: "100%", // Ensure full width
+        width: "100%", 
         marginTop: "15px",
       };
      
       const onSubmit=(data)=>{
         dispatch(add(data));
-        // reset();
-
         console.log("Hello",data);
         navigate('/part2')
       }
@@ -157,12 +180,12 @@ function Part1(){
                     id="merchant-panel-header"
                   >
                     <Typography
-                      variant="h5" // Adjust the variant as needed
-                      component="h1" // The semantic element to be used
-                      gutterBottom // Adds a bottom margin to the Typography
+                      variant="h5" 
+                      component="h1" 
+                      gutterBottom
                       sx={{
-                        color: "text.secondary", // Attractive light black color
-                        my: 2, // Margin top and bottom, adjust as needed
+                        color: "text.secondary", 
+                        my: 2, 
                       }}
                     >
                       1.A: Merchant Organization Information
@@ -177,8 +200,8 @@ function Part1(){
                           label="Company Name"
                           type="text"
                           name="company-name"
-                          defaultValue={formData?.[0]?.companyname ?? ""}
-
+                          // value={partOneFormData?.companyname}
+                          defaultValue={formData?.[0]?.companyname}
                           className={classes.formField}
                           {...register("companyname", {
                             required: "company-name is required",
@@ -197,7 +220,7 @@ function Part1(){
                           label="DBA (doing business as)"
                               type="text"  
                               name="dba"   
-                              defaultValue={formData?.[0]?.dba ?? ""}
+                              defaultValue={formData?.[0]?.dba}
 
                               {...register("dba", {
                                 required: "dba is required",
@@ -217,7 +240,7 @@ function Part1(){
                           label="Contact Name"
                          type="text"
                          name="contact-name"
-                         defaultValue={formData?.[0]?.contactname?? ""}
+                         defaultValue={formData?.[0]?.contactname}
 
                          {...register("contactname", {
                           required: "contact-name is required",
@@ -239,7 +262,7 @@ function Part1(){
                           label="Title"
                            type="text"
                           name="title"
-                          defaultValue={formData?.[0]?.title ?? ""}
+                          defaultValue={formData?.[0]?.title}
 
                           {...register("title", {
                             required: "title is required",
@@ -260,7 +283,7 @@ function Part1(){
                           label="Telephone"
                           type="num"
                           name="telephone"
-                          defaultValue={formData?.[0]?.telephone ?? ""}
+                          defaultValue={formData?.[0]?.telephone}
 
                           {...register("telephone", {
                             required: "Telephone number is required",
@@ -277,7 +300,7 @@ function Part1(){
                           label="E-mail"
                           type="email"
                           name="email"
-                          defaultValue={formData?.[0]?.email ?? ""}
+                          defaultValue={formData?.[0]?.email}
 
                           {...register("email", {
                             required: "email is required",
@@ -318,7 +341,7 @@ function Part1(){
 
                             label="State/Province"
                             name="state-province"
-                            defaultValue={formData?.[0]?.stateprovince ?? ""}
+                            defaultValue={formData?.[0]?.stateprovince}
 
                             MenuProps={{
                               classes: { paper: classes.menu },
@@ -354,7 +377,7 @@ function Part1(){
                           label="City"
                           type="text"
                           name="city"
-                          defaultValue={formData?.[0]?.city ?? ""}
+                          defaultValue={formData?.[0]?.city}
 
                           {...register("city", {
                             required: "city is required",
@@ -373,7 +396,7 @@ function Part1(){
                           label="URL"
                           type="url"
                           name="url"
-                          defaultValue={formData?.[0]?.url ?? ""}
+                          defaultValue={formData?.[0]?.url}
 
                           {...register("url", {
                             required: "URL is required",
@@ -395,7 +418,7 @@ function Part1(){
                           label="Pincode"
                           type="num"
                           name="Pincode"
-                          defaultValue={formData?.[0]?.Pincode ?? ""}
+                          defaultValue={formData?.[0]?.Pincode}
 
                           {...register("Pincode", {
                             required: "Pincode is required",
@@ -414,7 +437,7 @@ function Part1(){
                           label="Business Address"
                            type="text"
                            name="business-address"
-                           defaultValue={formData?.[0]?.businessaddress ?? ""}
+                           defaultValue={formData?.[0]?.businessaddress}
 
                            {...register("businessaddress", {
                             required: "business-address is required",

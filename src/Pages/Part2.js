@@ -16,7 +16,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch, useSelector, useSelectorseSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import {add} from '../formSlice'
+import {add} from '../Redux/formSlice'
 import {Radio,} from '@mui/material';
 
 import "react-toastify/dist/ReactToastify.css";

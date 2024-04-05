@@ -11,7 +11,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage"; // defaults to localStorage for web
-import formSlice from "./formSlice";
+import formSlice from './formSlice';
 
 const persistConfig = {
   key: "root",
