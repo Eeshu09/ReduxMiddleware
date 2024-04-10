@@ -21,7 +21,10 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
-import {add} from '../Redux/formSlice'
+import { encryptAndStoreFormData } from "../Redux/formSlice";
+import CryptoJS from 'crypto-js';
+
+// import {add} from '../Redux/formSlice'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -59,8 +62,25 @@ function Part1(){
   const{register,reset,handleSubmit,formState:{errors}}=useForm();
   const navigate=useNavigate();
   const dispatch=useDispatch();
-  const {formData}=useSelector((state)=>state.formData);
-  console.log("formData",formData[0]);
+  const { encryptedFormData} = useSelector((state) => state.form);
+  const [decryptedFormData, setDecryptedFormData] = useState(null);
+  console.log("enid",encryptedFormData)
+  const decryptData = (encryptedData) => {
+    const bytes = CryptoJS.AES.decrypt(encryptedData, 'secretKey');
+    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    return decryptedData;
+  };
+
+  useEffect(() => {
+    if (encryptedFormData) {
+      const decryptedData = decryptData(encryptedFormData);
+      setDecryptedFormData(decryptedData);
+    }
+  }, [encryptedFormData]);
+  console.log("desc",decryptedFormData);
+
+  // const {formData}=useSelector((state)=>state.formData);
+  // console.log("formData",formData[0]);
 const [partOneFormData,setPartOneFormData]=useState({
  companyname:'',
  contactname:'',
@@ -76,24 +96,24 @@ const [partOneFormData,setPartOneFormData]=useState({
  city:'',  
 })
 useEffect(() => {
-  if (formData && formData.length > 0) {
-    const data = formData[0]; 
+  if (decryptedFormData ) {
+    // const data = formData[0]; 
     setPartOneFormData({
-      companyname: data.companyname || '',
-      contactname: data.contactname || '',
-      country: data.country || '',
-      dba: data.dba || '',
-      Pincode: data.PinCode || '',
-      email: data.email || '',
-      telephone: data.telephone || '',
-      title: data.title || '',
-      url: data.url || '',
-      businessaddress: data.businessaddress || '',
-      stateprovince: data.stateprovince || '',
-      city: data.city || '',  
+      companyname: decryptedFormData?.companyname || '',
+      contactname: decryptedFormData.contactname || '',
+      country: decryptedFormData.country || '',
+      dba: decryptedFormData.dba || '',
+      Pincode: decryptedFormData.Pincode || '',
+      email: decryptedFormData.email || '',
+      telephone: decryptedFormData.telephone || '',
+      title: decryptedFormData.title || '',
+      url: decryptedFormData.url || '',
+      businessaddress: decryptedFormData.businessaddress || '',
+      stateprovince: decryptedFormData.stateprovince || '',
+      city: decryptedFormData.city || '',  
     });
   }
-}, [formData]);
+}, [decryptedFormData]);
 
 console.log("companyName",partOneFormData.companyname);
    
@@ -113,9 +133,9 @@ console.log("companyName",partOneFormData.companyname);
       };
      
       const onSubmit=(data)=>{
-        dispatch(add(data));
+        dispatch(encryptAndStoreFormData(data));
+
         console.log("Hello",data);
-        navigate('/part2')
       }
       const validateIndianTelephone = (value) => {
         const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
@@ -200,9 +220,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Company Name"
                           type="text"
                           name="company-name"
+                          InputLabelProps={{ shrink: true }}
                           // value={partOneFormData?.companyname}
-                          defaultValue={formData?.[0]?.companyname}
-                          className={classes.formField}
+                          value={partOneFormData.companyname}                      
+                              className={classes.formField}
                           {...register("companyname", {
                             required: "company-name is required",
                             pattern: {
@@ -219,8 +240,11 @@ console.log("companyName",partOneFormData.companyname);
                         fullWidth
                           label="DBA (doing business as)"
                               type="text"  
-                              name="dba"   
-                              defaultValue={formData?.[0]?.dba}
+                              name="dba" 
+                              InputLabelProps={{ shrink: true }}
+                              // value={partOneFormData?.companyname}
+                              value={partOneFormData.dba}
+                              // defaultValue={formData?.[0]?.dba}
 
                               {...register("dba", {
                                 required: "dba is required",
@@ -240,7 +264,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Contact Name"
                          type="text"
                          name="contact-name"
-                         defaultValue={formData?.[0]?.contactname}
+                         InputLabelProps={{ shrink: true }}
+                         // value={partOneFormData?.companyname}
+                         value={partOneFormData.contactname}  
+                        //  defaultValue={formData?.[0]?.contactname}
 
                          {...register("contactname", {
                           required: "contact-name is required",
@@ -262,7 +289,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Title"
                            type="text"
                           name="title"
-                          defaultValue={formData?.[0]?.title}
+                          // defaultValue={formData?.[0]?.title}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.title}  
 
                           {...register("title", {
                             required: "title is required",
@@ -283,7 +313,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Telephone"
                           type="num"
                           name="telephone"
-                          defaultValue={formData?.[0]?.telephone}
+                          // defaultValue={formData?.[0]?.telephone}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.telephone}  
 
                           {...register("telephone", {
                             required: "Telephone number is required",
@@ -300,7 +333,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="E-mail"
                           type="email"
                           name="email"
-                          defaultValue={formData?.[0]?.email}
+                          // defaultValue={formData?.[0]?.email}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.email}  
 
                           {...register("email", {
                             required: "email is required",
@@ -341,7 +377,10 @@ console.log("companyName",partOneFormData.companyname);
 
                             label="State/Province"
                             name="state-province"
-                            defaultValue={formData?.[0]?.stateprovince}
+                            InputLabelProps={{ shrink: true }}
+                            // value={partOneFormData?.companyname}
+                            value={partOneFormData.stateprovince}
+                            // defaultValue={formData?.[0]?.stateprovince}
 
                             MenuProps={{
                               classes: { paper: classes.menu },
@@ -377,7 +416,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="City"
                           type="text"
                           name="city"
-                          defaultValue={formData?.[0]?.city}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.city}
+                          // defaultValue={formData?.[0]?.city}
 
                           {...register("city", {
                             required: "city is required",
@@ -396,7 +438,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="URL"
                           type="url"
                           name="url"
-                          defaultValue={formData?.[0]?.url}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.url}  
+                          // defaultValue={formData?.[0]?.url}
 
                           {...register("url", {
                             required: "URL is required",
@@ -418,7 +463,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Pincode"
                           type="num"
                           name="Pincode"
-                          defaultValue={formData?.[0]?.Pincode}
+                          InputLabelProps={{ shrink: true }}
+                          // value={partOneFormData?.companyname}
+                          value={partOneFormData.Pincode}  
+                          // defaultValue={formData?.[0]?.Pincode}
 
                           {...register("Pincode", {
                             required: "Pincode is required",
@@ -437,7 +485,10 @@ console.log("companyName",partOneFormData.companyname);
                           label="Business Address"
                            type="text"
                            name="business-address"
-                           defaultValue={formData?.[0]?.businessaddress}
+                           InputLabelProps={{ shrink: true }}
+                           // value={partOneFormData?.companyname}
+                           value={partOneFormData.businessaddress}  
+                          //  defaultValue={formData?.[0]?.businessaddress}
 
                            {...register("businessaddress", {
                             required: "business-address is required",
@@ -458,8 +509,8 @@ console.log("companyName",partOneFormData.companyname);
            
             </AccordionDetails>
           </Accordion>
-          <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px' }}>
-        {formData && formData[0]?<Button color="primary" variant="outlined" onClick={()=>navigate('/part2')}>Update</Button> :<Button variant="outlined" color="success" type="submit">Save & Next</Button>}
+          <Box style={{display:'flex',justifyContent:'flex-end',marginRight:'70px' }}> 
+          <Button variant="outlined" color="success" type="submit">Save & Next</Button>        {/* {formData && formData[0]?<Button color="primary" variant="outlined" onClick={()=>navigate('/part2')}>Update</Button> :<Button variant="outlined" color="success" type="submit">Save & Next</Button>} */}
           </Box>
         </Box>
         </form>

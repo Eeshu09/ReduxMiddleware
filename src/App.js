@@ -23,8 +23,8 @@ function App() {
       </h1>
       <Routes>
         <Route path="/" element={<Part1/>}/>
-        <Route path ="/part2" element={<Part2/>}/>
-        <Route path="/part3" element={<Part3/>}/>
+        {/* <Route path ="/part2" element={<Part2/>}/> */}
+        {/* <Route path="/part3" element={<Part3/>}/> */}
         <Route/>
       </Routes>
 
