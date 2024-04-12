@@ -21,8 +21,12 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useSelector,useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
-import { encryptAndStoreFormData } from "../Redux/formSlice";
+import { encryptAndStoreFormData,decryptFormData } from "../Redux/formSlice";
 import CryptoJS from 'crypto-js';
+// import { decryptFormData } from '../Redux/formSlice';
+import { encryptText } from "../Redux/formSlice";
+import {decryptText} from "../Redux/formSlice"
+
 
 // import {add} from '../Redux/formSlice'
 
@@ -62,25 +66,25 @@ function Part1(){
   const{register,reset,handleSubmit,formState:{errors}}=useForm();
   const navigate=useNavigate();
   const dispatch=useDispatch();
-  const { encryptedFormData} = useSelector((state) => state.form);
-  const [decryptedFormData, setDecryptedFormData] = useState(null);
-  console.log("enid",encryptedFormData)
-  const decryptData = (encryptedData) => {
-    const bytes = CryptoJS.AES.decrypt(encryptedData, 'secretKey');
-    const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-    return decryptedData;
-  };
+  const encryptedFormData = useSelector(state => state.form.encryptedFormData?.[0]);
+  const decryptedFormData = useSelector(state => state.form.decryptedFormData);
+  // const encryptedText = encryptText(obj);
+  // const decryptedText = decryptText(encryptedText);
+
+  console.log("enc",encryptedFormData);
+
+const obj={
+  FormId:'589f6de7-69bd-448c-a247-bf73fd5858e7',
+  MerchantId:'589f6de7-69bd-448c-a247-bf73fd585845'
+}
 
   useEffect(() => {
     if (encryptedFormData) {
-      const decryptedData = decryptData(encryptedFormData);
-      setDecryptedFormData(decryptedData);
+      dispatch( decryptFormData({ encryptedData: encryptedFormData }));
     }
-  }, [encryptedFormData]);
-  console.log("desc",decryptedFormData);
+  }, [dispatch, encryptedFormData]);
 
-  // const {formData}=useSelector((state)=>state.formData);
-  // console.log("formData",formData[0]);
+  console.log("desc", decryptedFormData);
 const [partOneFormData,setPartOneFormData]=useState({
  companyname:'',
  contactname:'',
@@ -95,27 +99,26 @@ const [partOneFormData,setPartOneFormData]=useState({
  stateprovince:'',
  city:'',  
 })
-useEffect(() => {
-  if (decryptedFormData ) {
-    // const data = formData[0]; 
-    setPartOneFormData({
-      companyname: decryptedFormData?.companyname || '',
-      contactname: decryptedFormData.contactname || '',
-      country: decryptedFormData.country || '',
-      dba: decryptedFormData.dba || '',
-      Pincode: decryptedFormData.Pincode || '',
-      email: decryptedFormData.email || '',
-      telephone: decryptedFormData.telephone || '',
-      title: decryptedFormData.title || '',
-      url: decryptedFormData.url || '',
-      businessaddress: decryptedFormData.businessaddress || '',
-      stateprovince: decryptedFormData.stateprovince || '',
-      city: decryptedFormData.city || '',  
-    });
-  }
-}, [decryptedFormData]);
-
-console.log("companyName",partOneFormData.companyname);
+// useEffect(() => {
+//   if (decryptedFormData) {
+//     setPartOneFormData(prevState => ({
+//       ...prevState,
+//       companyname: decryptedFormData.companyname || '',
+//       contactname: decryptedFormData.contactname || '',
+//       country: decryptedFormData.country || '',
+//       dba: decryptedFormData.dba || '',
+//       Pincode: decryptedFormData.Pincode || '',
+//       email: decryptedFormData.email || '',
+//       telephone: decryptedFormData.telephone || '',
+//       title: decryptedFormData.title || '',
+//       url: decryptedFormData.url || '',
+//       businessaddress: decryptedFormData.businessaddress || '',
+//       stateprovince: decryptedFormData.stateprovince || '',
+//       city: decryptedFormData.city || '',  
+//     }));
+//   }
+// }, [decryptedFormData]);
+// console.log("companyName",partOneFormData.title);
    
 
 
@@ -133,7 +136,10 @@ console.log("companyName",partOneFormData.companyname);
       };
      
       const onSubmit=(data)=>{
-        dispatch(encryptAndStoreFormData(data));
+        dispatch(encryptAndStoreFormData(obj))
+        // dispatch(encryptText(obj))
+        // dispatch(encryptText(obj))
+        // navigate("/part2")
 
         console.log("Hello",data);
       }
@@ -221,8 +227,18 @@ console.log("companyName",partOneFormData.companyname);
                           type="text"
                           name="company-name"
                           InputLabelProps={{ shrink: true }}
-                          // value={partOneFormData?.companyname}
-                          value={partOneFormData.companyname}                      
+                          // value={
+                          //   decryptedFormData &&
+                          //     partOneFormData?.companyname 
+                          // }
+                          // onChange={(e) =>
+                          //   setPartOneFormData({
+                          //     ...partOneFormData,
+                          //     companyname: e.target.value,
+                          //   })
+                          // }
+                         
+                                         
                               className={classes.formField}
                           {...register("companyname", {
                             required: "company-name is required",
@@ -242,17 +258,18 @@ console.log("companyName",partOneFormData.companyname);
                               type="text"  
                               name="dba" 
                               InputLabelProps={{ shrink: true }}
-                              // value={partOneFormData?.companyname}
-                              value={partOneFormData.dba}
-                              // defaultValue={formData?.[0]?.dba}
-
-                              {...register("dba", {
-                                required: "dba is required",
-                                pattern: {
-                                  value: /^[A-Za-z\s]+$/, 
-                                  message: "Only alphabetical characters are allowed",
-                                },
-                              })}
+                              // value={
+                              //   decryptedFormData &&
+                              //     partOneFormData?.dba
+                              // }
+                        
+                              // {...register("dba", {
+                              //   required: "dba is required",
+                              //   pattern: { 
+                              //     value: /^[A-Za-z\s]+$/, 
+                              //     message: "Only alphabetical characters are allowed",
+                              //   },
+                              // })}
                               helperText={
                                 <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.dba?.message}</span>
                               }                      
@@ -265,9 +282,11 @@ console.log("companyName",partOneFormData.companyname);
                          type="text"
                          name="contact-name"
                          InputLabelProps={{ shrink: true }}
-                         // value={partOneFormData?.companyname}
-                         value={partOneFormData.contactname}  
-                        //  defaultValue={formData?.[0]?.contactname}
+                        //  value={
+                        //   decryptedFormData
+                        //     ?.partOneFormData?.contactname 
+                        // }
+
 
                          {...register("contactname", {
                           required: "contact-name is required",
@@ -291,9 +310,10 @@ console.log("companyName",partOneFormData.companyname);
                           name="title"
                           // defaultValue={formData?.[0]?.title}
                           InputLabelProps={{ shrink: true }}
-                          // value={partOneFormData?.companyname}
-                          value={partOneFormData.title}  
-
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.title
+                          // }
                           {...register("title", {
                             required: "title is required",
                             pattern: {
@@ -316,8 +336,10 @@ console.log("companyName",partOneFormData.companyname);
                           // defaultValue={formData?.[0]?.telephone}
                           InputLabelProps={{ shrink: true }}
                           // value={partOneFormData?.companyname}
-                          value={partOneFormData.telephone}  
-
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.telephone 
+                          // }
                           {...register("telephone", {
                             required: "Telephone number is required",
                             validate: validateIndianTelephone // Add custom validation function
@@ -335,8 +357,11 @@ console.log("companyName",partOneFormData.companyname);
                           name="email"
                           // defaultValue={formData?.[0]?.email}
                           InputLabelProps={{ shrink: true }}
-                          // value={partOneFormData?.companyname}
-                          value={partOneFormData.email}  
+                          // value={partOneFormData.email} 
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.email 
+                          // } 
 
                           {...register("email", {
                             required: "email is required",
@@ -378,16 +403,17 @@ console.log("companyName",partOneFormData.companyname);
                             label="State/Province"
                             name="state-province"
                             InputLabelProps={{ shrink: true }}
-                            // value={partOneFormData?.companyname}
-                            value={partOneFormData.stateprovince}
-                            // defaultValue={formData?.[0]?.stateprovince}
-
+                            
+                            // value={
+                            //   decryptedFormData
+                            //     ?.partOneFormData?.stateprovince
+                            // }   
                             MenuProps={{
                               classes: { paper: classes.menu },
                             }}
-                            {...register("stateprovince", {
-                              required: 'State is required',
-                            })}
+                            // {...register("stateprovince", {
+                            //   required: 'State is required',
+                            // })}
                             helperText={
                               <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.stateprovince?.message}</span>
                             }
@@ -417,8 +443,10 @@ console.log("companyName",partOneFormData.companyname);
                           type="text"
                           name="city"
                           InputLabelProps={{ shrink: true }}
-                          // value={partOneFormData?.companyname}
-                          value={partOneFormData.city}
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.city 
+                          // }                          // value={partOneFormData.city}
                           // defaultValue={formData?.[0]?.city}
 
                           {...register("city", {
@@ -440,8 +468,10 @@ console.log("companyName",partOneFormData.companyname);
                           name="url"
                           InputLabelProps={{ shrink: true }}
                           // value={partOneFormData?.companyname}
-                          value={partOneFormData.url}  
-                          // defaultValue={formData?.[0]?.url}
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.url 
+                          // }                          // defaultValue={formData?.[0]?.url}
 
                           {...register("url", {
                             required: "URL is required",
@@ -465,8 +495,10 @@ console.log("companyName",partOneFormData.companyname);
                           name="Pincode"
                           InputLabelProps={{ shrink: true }}
                           // value={partOneFormData?.companyname}
-                          value={partOneFormData.Pincode}  
-                          // defaultValue={formData?.[0]?.Pincode}
+                          // value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.Pincode 
+                          // }                          // // defaultValue={formData?.[0]?.Pincode}
 
                           {...register("Pincode", {
                             required: "Pincode is required",
@@ -486,9 +518,11 @@ console.log("companyName",partOneFormData.companyname);
                            type="text"
                            name="business-address"
                            InputLabelProps={{ shrink: true }}
-                           // value={partOneFormData?.companyname}
-                           value={partOneFormData.businessaddress}  
-                          //  defaultValue={formData?.[0]?.businessaddress}
+                          //  value={
+                          //   decryptedFormData
+                          //     ?.partOneFormData?.businessaddress 
+                          // }                          //  value={partOneFormData.businessaddress}  
+                          // //  defaultValue={formData?.[0]?.businessaddress}
 
                            {...register("businessaddress", {
                             required: "business-address is required",
