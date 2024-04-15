@@ -68,15 +68,25 @@ function Part1(){
   const dispatch=useDispatch();
   const encryptedFormData = useSelector(state => state.form.encryptedFormData?.[0]);
   const decryptedFormData = useSelector(state => state.form.decryptedFormData);
-  // const encryptedText = encryptText(obj);
-  // const decryptedText = decryptText(encryptedText);
+
 
   console.log("enc",encryptedFormData);
+  const key = 'MySecretKeyvipustishuk06'
 
 const obj={
   FormId:'589f6de7-69bd-448c-a247-bf73fd5858e7',
   MerchantId:'589f6de7-69bd-448c-a247-bf73fd585845'
 }
+// const encrypt = (text) => {
+//   const encrypted = CryptoJS.AES.encrypt(JSON.stringify(text), key).toString();
+//   return encrypted;
+// };
+;
+
+
+// const encryptedText = encrypt(obj);
+// console.log('Encrypted:', encryptedText);
+
 
   useEffect(() => {
     if (encryptedFormData) {
@@ -263,13 +273,13 @@ const [partOneFormData,setPartOneFormData]=useState({
                               //     partOneFormData?.dba
                               // }
                         
-                              // {...register("dba", {
-                              //   required: "dba is required",
-                              //   pattern: { 
-                              //     value: /^[A-Za-z\s]+$/, 
-                              //     message: "Only alphabetical characters are allowed",
-                              //   },
-                              // })}
+                              {...register("dba", {
+                                required: "dba is required",
+                                pattern: { 
+                                  value: /^[A-Za-z\s]+$/, 
+                                  message: "Only alphabetical characters are allowed",
+                                },
+                              })}
                               helperText={
                                 <span style={{position:'absolute',fontSize:'12px',marginLeft:'-10px',marginTop:'-6px',color:'red'}}>{errors.dba?.message}</span>
                               }                      
