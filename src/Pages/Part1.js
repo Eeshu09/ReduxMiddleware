@@ -66,35 +66,24 @@ function Part1(){
   const{register,reset,handleSubmit,formState:{errors}}=useForm();
   const navigate=useNavigate();
   const dispatch=useDispatch();
-  const encryptedFormData = useSelector(state => state.form.encryptedFormData?.[0]);
-  const decryptedFormData = useSelector(state => state.form.decryptedFormData);
-
-
-  console.log("enc",encryptedFormData);
+  // const encryptedFormData = useSelector(state => state.form.encryptedFormData?.[0]);
+  // const decryptedFormData = useSelector(state => state.form.decryptedFormData);
+ 
   const key = 'MySecretKeyvipustishuk06'
 
 const obj={
   FormId:'589f6de7-69bd-448c-a247-bf73fd5858e7',
   MerchantId:'589f6de7-69bd-448c-a247-bf73fd585845'
 }
-// const encrypt = (text) => {
-//   const encrypted = CryptoJS.AES.encrypt(JSON.stringify(text), key).toString();
-//   return encrypted;
-// };
-;
 
 
-// const encryptedText = encrypt(obj);
-// console.log('Encrypted:', encryptedText);
+  // useEffect(() => {
+  //   if (encryptedFormData) {
+  //     dispatch( decryptFormData({ encryptedData: encryptedFormData }));
+  //   }
+  // }, [dispatch, encryptedFormData]);
 
-
-  useEffect(() => {
-    if (encryptedFormData) {
-      dispatch( decryptFormData({ encryptedData: encryptedFormData }));
-    }
-  }, [dispatch, encryptedFormData]);
-
-  console.log("desc", decryptedFormData);
+  // console.log("desc", decryptedFormData);
 const [partOneFormData,setPartOneFormData]=useState({
  companyname:'',
  contactname:'',
@@ -144,15 +133,55 @@ const [partOneFormData,setPartOneFormData]=useState({
         width: "100%", 
         marginTop: "15px",
       };
-     
-      const onSubmit=(data)=>{
-        dispatch(encryptAndStoreFormData(obj))
-        // dispatch(encryptText(obj))
-        // dispatch(encryptText(obj))
-        // navigate("/part2")
 
-        console.log("Hello",data);
-      }
+      const encryptedFormData = useSelector(state => state.form.encryptedData);
+      const decryptedFormData = useSelector(state => state.form.decryptedData);
+      useEffect(() => {
+        if (encryptedFormData) {
+          dispatch(decryptFormData(encryptedFormData));
+        }
+      }, [dispatch, encryptedFormData]);
+    
+      const onSubmit = async (data) => {
+        try {
+          await dispatch(encryptAndStoreFormData(obj));
+          reset();
+        } catch (error) {
+          console.error("Encryption failed:", error);
+        }
+      };
+    
+      console.log("Encrypted Data:", encryptedFormData);
+      console.log("Decrypted Data:", decryptedFormData);
+      // const onSubmit = async (data) => {
+      //   try {
+      //     await dispatch(encryptAndStoreFormData(obj));
+      //     reset();
+      //   } catch (error) {
+      //     console.error("Encryption failed:", error);
+      //   }
+      // };
+    
+      // useEffect(() => {
+      //   if (encryptedFormData) {
+      //     dispatch(decryptFormData(encryptedFormData));
+      //   }
+      // }, [dispatch, encryptedFormData]);
+
+      // console.log("enc",encryptedFormData)
+      // console.log("des",decryptedFormData)
+
+    
+      
+     
+      // const onSubmit=(data)=>{
+      //   dispatch(encryptAndStoreFormData(obj))
+      //   // dispatch(encryptText(obj))
+      //   // dispatch(encryptText(obj))
+      //   // navigate("/part2")
+
+      //   console.log("Hello",data);
+      // }
       const validateIndianTelephone = (value) => {
         const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
     
@@ -237,16 +266,6 @@ const [partOneFormData,setPartOneFormData]=useState({
                           type="text"
                           name="company-name"
                           InputLabelProps={{ shrink: true }}
-                          // value={
-                          //   decryptedFormData &&
-                          //     partOneFormData?.companyname 
-                          // }
-                          // onChange={(e) =>
-                          //   setPartOneFormData({
-                          //     ...partOneFormData,
-                          //     companyname: e.target.value,
-                          //   })
-                          // }
                          
                                          
                               className={classes.formField}
