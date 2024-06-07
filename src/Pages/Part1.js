@@ -98,7 +98,8 @@ const [partOneFormData,setPartOneFormData]=useState({
  stateprovince:'',
  city:'',  
 })
-// useEffect(() => {
+
+   // useEffect(() => {
 //   if (decryptedFormData) {
 //     setPartOneFormData(prevState => ({
 //       ...prevState,
@@ -136,15 +137,35 @@ const [partOneFormData,setPartOneFormData]=useState({
 
       const encryptedFormData = useSelector(state => state.form.encryptedData);
       const decryptedFormData = useSelector(state => state.form.decryptedData);
+    
+
       useEffect(() => {
         if (encryptedFormData) {
           dispatch(decryptFormData(encryptedFormData));
         }
       }, [dispatch, encryptedFormData]);
+
+      const [encryptedTextt, setEncryptedTextt] = useState('');
+      const [decryptedTextt, setDecryptedTextt] = useState('');
+  
+      const encryptData = (data) => {
+        const encrypted = CryptoJS.AES.encrypt(JSON.stringify(data), key).toString();
+        return encrypted;
+      };
+    
+      const decryptData = (encryptedText) => {
+        const bytes = CryptoJS.AES.decrypt(encryptedText, key);
+        const decrypted = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+        return decrypted;
+      };
+    console.log("encdkjf",encryptedTextt);
     
       const onSubmit = async (data) => {
+        const obj = { "email": "admin@example.com", "password": "admin123" };
+    const encrypted = encryptData(obj);
+    setEncryptedTextt(encrypted);
         try {
-          await dispatch(encryptAndStoreFormData(obj));
+          await dispatch(encryptAndStoreFormData({"email":"admin@example.com","password":"admin123"}));
           reset();
         } catch (error) {
           console.error("Encryption failed:", error);
@@ -153,35 +174,11 @@ const [partOneFormData,setPartOneFormData]=useState({
     
       console.log("Encrypted Data:", encryptedFormData);
       console.log("Decrypted Data:", decryptedFormData);
-      // const onSubmit = async (data) => {
-      //   try {
-      //     await dispatch(encryptAndStoreFormData(obj));
-      //     reset();
-      //   } catch (error) {
-      //     console.error("Encryption failed:", error);
-      //   }
-      // };
+      
     
-      // useEffect(() => {
-      //   if (encryptedFormData) {
-      //     dispatch(decryptFormData(encryptedFormData));
-      //   }
-      // }, [dispatch, encryptedFormData]);
-
-      // console.log("enc",encryptedFormData)
-      // console.log("des",decryptedFormData)
-
     
       
      
-      // const onSubmit=(data)=>{
-      //   dispatch(encryptAndStoreFormData(obj))
-      //   // dispatch(encryptText(obj))
-      //   // dispatch(encryptText(obj))
-      //   // navigate("/part2")
-
-      //   console.log("Hello",data);
-      // }
       const validateIndianTelephone = (value) => {
         const indianPhoneNumberRegex = /^[6-9]\d{9}$/;
     
